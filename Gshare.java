@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class TwoBit {
+class GShare {
 
     final static DecimalFormat df = new DecimalFormat("0.00");
     public static void main(String [] args){
@@ -17,6 +17,7 @@ class TwoBit {
 
             int tableSize = Integer.parseInt(args[1]);
             readFile(args[0], tableSize);
+            System.out.println(tableSize);
         }else if (args.length == 1){
             for(int i = 512; i <= 4096; System.out.println("\n")){
                 System.out.println(i);
@@ -65,27 +66,35 @@ class TwoBit {
         //https://stackoverflow.com/questions/23751618/how-to-split-a-java-string-at-backslash
         filenameArray = filename.split("\\\\");
         if(taken.size() > 0){
-            System.out.println(filenameArray[2] + ": " + df.format(twoBit(branch, taken, tableSize)) + "%");
+            System.out.println(filenameArray[2] + ": " + df.format(gShare(branch, taken, tableSize)) + "%");
         }
         
     }
 
-    static double twoBit(ArrayList<String> branch, ArrayList<Integer> taken, int tableSize){
+    static double gShare(ArrayList<String> branch, ArrayList<Integer> taken, int tableSize){
         int correct = 0;
         int sigBits = (int)(Math.log(tableSize) / Math.log(2));
         String[] buffer = new String[tableSize];
+        String global = "0";
 
         for(int i = 0; i < taken.size(); i++){
             String binary = Long.toBinaryString(Long.parseLong(branch.get(i)));
+            
 
             if (binary.length() > sigBits) {
                 binary = binary.substring(binary.length() - sigBits);
             }else{
                 binary = branch.get(i);
             }
-            
-            int index = Integer.parseInt(binary, 2);
-            
+
+            if (global.length() > sigBits) {
+                global = global.substring(global.length() - sigBits);
+            }
+
+            int a = Integer.parseInt(binary, 2);
+            int b = Integer.parseInt(global, 2);
+            int index = a ^ b;
+
             if(buffer[index] == null){
                 buffer[index] = "00";
             }
@@ -117,11 +126,13 @@ class TwoBit {
                     buffer[index] = "00";
                 }
             }
+            global += taken.get(i);
         }
 
-        double difference = ((double) (taken.size() - correct)  / taken.size()) * 100;
+        double difference = ((double) (taken.size() - correct) / taken.size()) * 100;
         //double difference = ((double) correct  / taken.size()) * 100;
         return difference;
     }
+
 
 }

@@ -10,7 +10,7 @@ class AlwaysTaken {
     public static void main(String [] args){
         
         if(args.length != 1){
-            System.out.println("Proper Usage: java Simulator <individual file or directory of files>");
+            System.out.println("Proper Usage: java AlwaysTaken <individual file or directory of files>");
             System.exit(0);
         }
 
@@ -57,7 +57,8 @@ class AlwaysTaken {
                 correct++;
             }
         }
-        double difference = ((float)correct / taken.size()) * 100;
+        double difference = ((double) (taken.size() - correct) / taken.size()) * 100;
+        //double difference = ((double) correct  / taken.size()) * 100;
         System.out.println(df.format(difference));
     }
 
